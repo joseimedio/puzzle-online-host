@@ -1,0 +1,6 @@
+- Shuffle only works after moving the mouse.
+- Bring your own image and generate the puzzle (with options).
+- Host the server online.
+- Make it collaborative.
+- Take everything to a new project with the right names.
+- Design.
