@@ -15,6 +15,7 @@ export default function NewPuzzle2 () {
         e.preventDefault();
 
         const originalImage = new Image();
+        originalImage.crossOrigin = 'Anonymous';
         originalImage.src = imagePath;
         setOriginalImg(originalImage);
 
@@ -47,6 +48,21 @@ export default function NewPuzzle2 () {
         const startY = pieceH * parseInt(id/numCols);
      
         ctx.drawImage(originalImg, startX, startY, pieceW, pieceH, 0, 0, pieceW, pieceH);
+    }
+
+    const downloadImage = (id) => {
+        let canvas = document.getElementById(String(id));
+        let anchor = document.createElement("a");
+        const fileName = "Puzzle-online" + String(Date.now()) + String(id);
+        anchor.href = canvas.toDataURL(fileName);
+        anchor.download = fileName;
+        anchor.click();
+    }
+
+    const downloadPuzzle = () => {
+        piecesIds.forEach((id) => {
+            downloadImage(id);
+        })
     }
     
 
@@ -117,7 +133,7 @@ export default function NewPuzzle2 () {
                     </form>
                     {piecesIds && (
                         <button
-                            
+                            onClick={() => downloadPuzzle()}
                         >Download</button>
                     )}
 
