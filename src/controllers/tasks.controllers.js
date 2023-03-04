@@ -45,14 +45,14 @@ const createUser = async (req, res, next) => {
 };
 
 const insertPieces = async (req, res, next) => {
-    const { local_id, img_src, dimensions, current_location, true_location, puzzle_id } = req.body;
+    const { localId, imgSrc, dimensions, currentLocation, trueLocation, puzzleId } = req.body;
 
     try {
         const result = await pool.query(
             `
                 INSERT INTO pieces (local_id, img_src, dimensions, current_location, true_location, puzzle_id)
                 VALUES 
-                    (${local_id}, ${img_src}, ${dimensions}, ${current_location}, ${true_location}, ${puzzle_id})
+                    (${localId}, ${imgSrc}, '${dimensions}', '${currentLocation}', '${trueLocation}', ${puzzleId})
                 RETURNING *;
             `
         );

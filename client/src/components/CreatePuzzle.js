@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-export default function NewPuzzle2 () {
+export default function CreatePuzzle () {
     const [imagePath, setImagePath] = useState('');
     const [numCols, setNumCols] = useState('');
     const [numRows, setNumRows] = useState('');
@@ -49,7 +49,7 @@ export default function NewPuzzle2 () {
     }
 
     // Functions to persist data in the server
-    const savePiece = async (puzzle_id, id) => {
+    const savePiece = async (puzzleId, id) => {
         const canvas = document.getElementById(String(id));
         const encodedImg = canvas.toDataURL();
 
@@ -57,6 +57,8 @@ export default function NewPuzzle2 () {
             x: canvas.width * (id % numCols),               // PROBABLY WRONG!!
             y: canvas.height * parseInt(id/numCols)
         }
+
+        console.log(location);
   
         const query_res = await(
           await fetch("http://localhost:4000/pieces", {
@@ -65,12 +67,15 @@ export default function NewPuzzle2 () {
               'Content-type': 'application/json'
             },
             body: JSON.stringify({
-                local_id: id, 
-                img_src: encodedImg, 
-                dimensions: `(${canvas.width}, ${canvas.height})`, 
-                current_location: `(${location.x}, ${location.y})`, 
-                true_location: `(${location.x}, ${location.y})`, 
-                puzzle_id
+                localId: id, 
+                imgSrc: encodedImg, 
+                // dimensions: `(${canvas.width}, ${canvas.height})`, 
+                // current_location: `(${location.x}, ${location.y})`, 
+                // true_location: `(${location.x}, ${location.y})`, 
+                dimensions: '(1,1)',
+                currentLocation: '(1,1)',
+                trueLocation: '(1,1)',
+                puzzleId
             })
           })
         ).json();
@@ -96,11 +101,11 @@ export default function NewPuzzle2 () {
             })
           ).json();
     
-          console.log(query_res);
-          const puzzle_id = 1; //THIS SHOULD COME OUT OF THE QUERY RESPONSE
+          console.log(query_res.id);
+          const puzzleId = query_res.id; 
 
         await piecesIds.forEach((id) => {
-          savePiece(puzzle_id, id);
+          savePiece(puzzleId, id);
         })
   
         console.log("Saved successfully!");
