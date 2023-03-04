@@ -1,16 +1,20 @@
 const { Router } = require('express');
-const { getAllTasks, getTask, createTask, deleteTask, updateTask } = require('../controllers/tasks.controllers')
+const { getPuzzle, createPuzzle, createUser, insertPieces, deletePuzzle, deleteUser, updatePiece } = require('../controllers/tasks.controllers')
 
 const router = Router();
 
-router.get('/tasks', getAllTasks);
+router.get('/puzzles', getPuzzle);
 
-router.get('/tasks/:id', getTask);
+router.post('/puzzles', createPuzzle);
 
-router.post('/tasks', createTask);
+router.post('/users', createUser);
 
-router.delete('/tasks', deleteTask);
+router.post('/pieces', insertPieces);
 
-router.put('/tasks', updateTask);
+router.delete('/puzzles', deletePuzzle);
+
+router.delete('/users', deleteUser);
+
+router.put('/pieces', updatePiece);
 
 module.exports = router;

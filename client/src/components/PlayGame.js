@@ -19,14 +19,21 @@ export default function PlayGame() {
     const background_mat = "https://media.istockphoto.com/id/1092139474/photo/empty-green-casino-poker-table-cloth-with-spotlight.jpg?b=1&s=170667a&w=0&k=20&c=vxjd_9eXbFxziFSEG_tCGogO0ht0tgJ17C2iSx0C21k=";
     const standardStep = 50;
 
+    const defaultPuzzleId = 1;
 
     // Read data from the server
     useEffect(() => {
       const dataFetch = async () => {
         const serverData = await (
-          await fetch(
-            "http://localhost:4000/tasks"
-          )
+          await fetch("http://localhost:4000/puzzles", {
+          method: "GET",
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: JSON.stringify({
+            puzzle_id: defaultPuzzleId
+          })
+        })
         ).json();
   
         const ids = [];
@@ -57,13 +64,14 @@ export default function PlayGame() {
       const newLocation = data[piece_id - 1].current_location;
 
       const query_res = await(
-        await fetch("http://localhost:4000/tasks", {
+        await fetch("http://localhost:4000/pieces", {
           method: "PUT",
           headers: {
             'Content-type': 'application/json'
           },
           body: JSON.stringify({
-            id: piece_id,
+            puzzle_id: defaultPuzzleId, 
+            piece_id, 
             current_location: `(${newLocation.x},${newLocation.y})`
           })
         })

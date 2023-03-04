@@ -1,5 +1,4 @@
-import React, { createElement, useEffect, useState } from 'react';
-
+import React, { useEffect, useState } from 'react';
 
 export default function NewPuzzle2 () {
     const [imagePath, setImagePath] = useState('');
@@ -10,6 +9,8 @@ export default function NewPuzzle2 () {
     const [maxWidth, setMaxWidth] = useState();
 
     const marginPx = 3;
+
+    const defaultUserId = 1;
 
     const handleSubmitColsAndRows = (e) => {
         e.preventDefault();
@@ -23,17 +24,14 @@ export default function NewPuzzle2 () {
         setPiecesIds([...Array(numCols * numRows).keys()]);
     }
 
+
     useEffect(() => {
         if (piecesIds) {
-            displayPuzzle();
+            piecesIds.forEach((id) => {
+                createPiece(id);
+            })
         }
     }, [piecesIds])
-
-    const displayPuzzle = () => {
-        piecesIds.forEach((id) => {
-            createPiece(id);
-        })
-    }
 
     const createPiece = (id) => {
         const pieceW = originalImg.width / numCols;
@@ -50,21 +48,64 @@ export default function NewPuzzle2 () {
         ctx.drawImage(originalImg, startX, startY, pieceW, pieceH, 0, 0, pieceW, pieceH);
     }
 
-    const downloadImage = (id) => {
-        let canvas = document.getElementById(String(id));
-        let anchor = document.createElement("a");
-        const fileName = "Puzzle-online" + String(Date.now()) + String(id);
-        anchor.href = canvas.toDataURL(fileName);
-        anchor.download = fileName;
-        anchor.click();
-    }
+    // Functions to persist data in the server
+    const savePiece = async (puzzle_id, id) => {
+        const canvas = document.getElementById(String(id));
+        const encodedImg = canvas.toDataURL();
 
-    const downloadPuzzle = () => {
-        piecesIds.forEach((id) => {
-            downloadImage(id);
-        })
-    }
+        const location = {
+            x: canvas.width * (id % numCols),               // PROBABLY WRONG!!
+            y: canvas.height * parseInt(id/numCols)
+        }
+  
+        const query_res = await(
+          await fetch("http://localhost:4000/pieces", {
+            method: "POST",
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                local_id: id, 
+                img_src: encodedImg, 
+                dimensions: `(${canvas.width}, ${canvas.height})`, 
+                current_location: `(${location.x}, ${location.y})`, 
+                true_location: `(${location.x}, ${location.y})`, 
+                puzzle_id
+            })
+          })
+        ).json();
+  
+        console.log(query_res);
+      };
+  
+    const savePuzzle = async (req, res, next) => {
+        // Let user assign name
+
+        const query_res = await(
+            await fetch("http://localhost:4000/puzzles", {
+              method: "POST",
+              headers: {
+                'Content-type': 'application/json'
+              },
+              body: JSON.stringify({
+                imagePath, 
+                numCols, 
+                numRows, 
+                userId: defaultUserId
+              })
+            })
+          ).json();
     
+          console.log(query_res);
+          const puzzle_id = 1; //THIS SHOULD COME OUT OF THE QUERY RESPONSE
+
+        await piecesIds.forEach((id) => {
+          savePiece(puzzle_id, id);
+        })
+  
+        console.log("Saved successfully!");
+      }      
+
 
     return (
         imagePath === '' 
@@ -86,6 +127,9 @@ export default function NewPuzzle2 () {
         : 
         (
             <div>
+                <div>
+                    <img id="sample-img"/>
+                </div>
                 <div>
                 {piecesIds 
                 ? 
@@ -133,8 +177,8 @@ export default function NewPuzzle2 () {
                     </form>
                     {piecesIds && (
                         <button
-                            onClick={() => downloadPuzzle()}
-                        >Download</button>
+                            onClick={() => savePuzzle()}
+                        >Save</button>
                     )}
 
                 </div>
