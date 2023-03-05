@@ -7,7 +7,7 @@ exports.up = pgm => {
         CREATE TABLE pieces (
             id SERIAL PRIMARY KEY,
             local_id INTEGER NOT NULL,
-            img_src VARCHAR(1) NOT NULL,
+            img_src VARCHAR(1000000) NOT NULL,
             dimensions POINT NOT NULL,
             current_location POINT NOT NULL,
             true_location POINT NOT NULL,

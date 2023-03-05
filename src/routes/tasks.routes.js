@@ -3,7 +3,7 @@ const { getPuzzle, createPuzzle, createUser, insertPieces, deletePuzzle, deleteU
 
 const router = Router();
 
-router.get('/puzzles', getPuzzle);
+router.get('/puzzles/:id', getPuzzle);
 
 router.post('/puzzles', createPuzzle);
 

@@ -1,7 +1,7 @@
 const pool = require('../db');
 
 const getPuzzle = async (req, res, next) => {
-    const { puzzle_id } = req.body;
+    puzzle_id = req.params.id;
 
     try {
         const allTasks = await pool.query('SELECT * FROM pieces WHERE puzzle_id=$1', [puzzle_id]);
@@ -45,14 +45,15 @@ const createUser = async (req, res, next) => {
 };
 
 const insertPieces = async (req, res, next) => {
-    const { localId, imgSrc, dimensions, currentLocation, trueLocation, puzzleId } = req.body;
+    const { localId, imgSrc, dimensions, currentLoc, trueLoc, puzzleId } = req.body;
 
+    console.log(dimensions);
     try {
         const result = await pool.query(
             `
                 INSERT INTO pieces (local_id, img_src, dimensions, current_location, true_location, puzzle_id)
                 VALUES 
-                    (${localId}, ${imgSrc}, '${dimensions}', '${currentLocation}', '${trueLocation}', ${puzzleId})
+                    ('${localId}', '${imgSrc}', '(${dimensions.x}, ${dimensions.y})', '(${currentLoc.x}, ${currentLoc.y})', '(${trueLoc.x},${trueLoc.y})', '${puzzleId}')
                 RETURNING *;
             `
         );
@@ -93,6 +94,8 @@ const deleteUser = async (req, res, next) => {
 
 const updatePiece = async (req, res, next) => {
     const { puzzle_id, piece_id, current_location } = req.body;
+
+    console.log(current_location);
 
     try {
         const result = await pool.query(

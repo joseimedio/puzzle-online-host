@@ -19,23 +19,16 @@ export default function PlayGame() {
     const background_mat = "https://media.istockphoto.com/id/1092139474/photo/empty-green-casino-poker-table-cloth-with-spotlight.jpg?b=1&s=170667a&w=0&k=20&c=vxjd_9eXbFxziFSEG_tCGogO0ht0tgJ17C2iSx0C21k=";
     const standardStep = 50;
 
-    const defaultPuzzleId = 1;
+    const defaultPuzzleId = 36;
 
     // Read data from the server
     useEffect(() => {
       const dataFetch = async () => {
         const serverData = await (
-          await fetch("http://localhost:4000/puzzles", {
-          method: "GET",
-          headers: {
-            'Content-type': 'application/json'
-          },
-          body: JSON.stringify({
-            puzzle_id: defaultPuzzleId
-          })
-        })
+          await fetch("http://localhost:4000/puzzles/" + String(defaultPuzzleId))
         ).json();
   
+        console.log(serverData);
         const ids = [];
         serverData.forEach((item) => {
           ids.push(item.id);
@@ -197,7 +190,7 @@ export default function PlayGame() {
                       <img
                         key={item.id} 
                         id={item.id} 
-                        src={item.url}
+                        src={item.img_src}
                         alt={"piece num. " + item.id}
                         width={item.dimensions.x}
                         height={item.dimensions.y}

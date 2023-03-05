@@ -69,12 +69,9 @@ export default function CreatePuzzle () {
             body: JSON.stringify({
                 localId: id, 
                 imgSrc: encodedImg, 
-                // dimensions: `(${canvas.width}, ${canvas.height})`, 
-                // current_location: `(${location.x}, ${location.y})`, 
-                // true_location: `(${location.x}, ${location.y})`, 
-                dimensions: '(1,1)',
-                currentLocation: '(1,1)',
-                trueLocation: '(1,1)',
+                dimensions: {x:canvas.width, y: canvas.height}, 
+                currentLoc: location, 
+                trueLoc: location, 
                 puzzleId
             })
           })
@@ -101,7 +98,7 @@ export default function CreatePuzzle () {
             })
           ).json();
     
-          console.log(query_res.id);
+        //   console.log(query_res.id);
           const puzzleId = query_res.id; 
 
         await piecesIds.forEach((id) => {
