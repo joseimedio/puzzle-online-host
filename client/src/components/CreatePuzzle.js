@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 
 export default function CreatePuzzle () {
     const [imagePath, setImagePath] = useState('');
-    const [numCols, setNumCols] = useState('');
-    const [numRows, setNumRows] = useState('');
     const [originalImg, setOriginalImg] = useState();
+    const [numCols, setNumCols] = useState(1);
+    const [numRows, setNumRows] = useState(1);
     const [piecesIds, setPiecesIds] = useState();
     const [maxWidth, setMaxWidth] = useState();
 
@@ -12,18 +12,24 @@ export default function CreatePuzzle () {
 
     const defaultUserId = 1;
 
-    const handleSubmitColsAndRows = (e) => {
-        e.preventDefault();
+    const handleSubmitImagePath = (e) => {
+        const imageURL = e.target.value;
+        setImagePath(imageURL);
 
         const originalImage = new Image();
         originalImage.crossOrigin = 'Anonymous';
-        originalImage.src = imagePath;
-        setOriginalImg(originalImage);
+        originalImage.src = imageURL;
+        // Resize if it's too big!!
 
-        setMaxWidth(originalImage.width + marginPx*numCols + 10);
-        setPiecesIds([...Array(numCols * numRows).keys()]);
+        setOriginalImg(originalImage);
     }
 
+    const handleSubmitColsAndRows = (e) => {
+        e.preventDefault();
+
+        setMaxWidth(originalImg.width + marginPx*numCols + 10);
+        setPiecesIds([...Array(numCols * numRows).keys()]);
+    }
 
     useEffect(() => {
         if (piecesIds) {
@@ -55,10 +61,10 @@ export default function CreatePuzzle () {
 
         const location = {
             x: canvas.width * (id % numCols),               // PROBABLY WRONG!!
-            y: canvas.height * parseInt(id/numCols)
+            y: canvas.height * parseInt(id / numCols)
         }
 
-        console.log(location);
+        // console.log(location);
   
         const query_res = await(
           await fetch("http://localhost:4000/pieces", {
@@ -77,7 +83,7 @@ export default function CreatePuzzle () {
           })
         ).json();
   
-        console.log(query_res);
+        // console.log(query_res.puzzle_id);
       };
   
     const savePuzzle = async (req, res, next) => {
@@ -105,7 +111,7 @@ export default function CreatePuzzle () {
           savePiece(puzzleId, id);
         })
   
-        console.log("Saved successfully!");
+        alert("Puzzle " + String(puzzleId) + " was successfully saved!");
       }      
 
 
@@ -120,7 +126,7 @@ export default function CreatePuzzle () {
                         id="url" 
                         placeholder="Paste the url here: "
                         value={imagePath}
-                        onChange={(e) => setImagePath(e.target.value)}
+                        onChange={handleSubmitImagePath}
                     />
                     <input type="submit" value="Submit"></input>
                 </form>
@@ -129,9 +135,6 @@ export default function CreatePuzzle () {
         : 
         (
             <div>
-                <div>
-                    <img id="sample-img"/>
-                </div>
                 <div>
                 {piecesIds 
                 ? 
@@ -153,7 +156,6 @@ export default function CreatePuzzle () {
                     <div>
                         <img 
                             src={imagePath}
-                            
                         ></img>
                     </div>
                 )

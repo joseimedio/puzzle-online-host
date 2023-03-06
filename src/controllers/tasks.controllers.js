@@ -4,8 +4,9 @@ const getPuzzle = async (req, res, next) => {
     puzzle_id = req.params.id;
 
     try {
-        const allTasks = await pool.query('SELECT * FROM pieces WHERE puzzle_id=$1', [puzzle_id]);
-        res.json(allTasks.rows)
+        const puzzleInfo = await pool.query('SELECT * FROM puzzles WHERE id=$1', [puzzle_id]);
+        const allPieces = await pool.query('SELECT * FROM pieces WHERE puzzle_id=$1', [puzzle_id]);
+        res.json({info:puzzleInfo.rows, pieces:allPieces.rows})
     } catch (err){
         next(err);
     }

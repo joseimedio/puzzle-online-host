@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 export default function PlayGame() {
     const [data, setData] = useState();
-    const [idOffset, setIdOffset] = useState(1);
+    const [puzzleDimensions, setPuzzleDimensions] = useState({width: 0, height: 0});
 
     const [mouseCoords, setMouseCoords] = useState({x: 0, y: 0});
     const [prevMouseCoords, setPrevMouseCoords] = useState({x: 0, y: 0})
@@ -10,42 +10,35 @@ export default function PlayGame() {
 
     // Background texture
     const background_img = "https://img.freepik.com/free-photo/oak-wooden-textured-design-background_53876-143033.jpg?w=2000";
+    const background_mat = "https://media.istockphoto.com/id/1092139474/photo/empty-green-casino-poker-table-cloth-with-spotlight.jpg?b=1&s=170667a&w=0&k=20&c=vxjd_9eXbFxziFSEG_tCGogO0ht0tgJ17C2iSx0C21k=";
     const background_width = 1300;
     const backgroun_height = 500;
 
     // Puzzle and background mat
-    const puzzle_size = [585, 200];
-    const margin = [300, 150];
-    const background_mat = "https://media.istockphoto.com/id/1092139474/photo/empty-green-casino-poker-table-cloth-with-spotlight.jpg?b=1&s=170667a&w=0&k=20&c=vxjd_9eXbFxziFSEG_tCGogO0ht0tgJ17C2iSx0C21k=";
+    const margin = ["20%", "15%"];
     const standardStep = 50;
 
-    const defaultPuzzleId = 36;
+    const currentURL = window.location.href.split("/");
+    const puzzleId = currentURL[currentURL.length - 1];
 
     // Read data from the server
     useEffect(() => {
       const dataFetch = async () => {
         const serverData = await (
-          await fetch("http://localhost:4000/puzzles/" + String(defaultPuzzleId))
+          await fetch("http://localhost:4000/puzzles/" + String(puzzleId))
         ).json();
   
-        console.log(serverData);
-        const ids = [];
-        serverData.forEach((item) => {
-          ids.push(item.id);
-        });
-        ids.sort((a,b) => a-b);
+        const pieces = serverData.pieces;
+        pieces.sort((a,b) => a.local_id - b.local_id);
+        setData(pieces);
 
-        let sortedServerData = [];
-        ids.forEach((id) => {
-          serverData.forEach((piece) => {
-            if (piece.id === id) {
-              sortedServerData.push(piece);
-            }  
-          })
-        })
-
-        setIdOffset(sortedServerData[0].id);  // Set id offset, in case first id in the server is not 1
-        setData(sortedServerData);
+        const puzzleInfo = serverData.info[0];
+        const dimensions = {
+          width: puzzleInfo.num_cols * pieces[0].dimensions.x,
+          height: puzzleInfo.num_rows * pieces[0].dimensions.y
+        };
+        setPuzzleDimensions(dimensions);
+        console.log(dimensions);
       };
   
       dataFetch();
@@ -54,7 +47,7 @@ export default function PlayGame() {
 
     // Functions to persist data in the server
     const updateLocation = async (piece_id) => {
-      const newLocation = data[piece_id - 1].current_location;
+      const newLocation = data[piece_id].current_location;
 
       const query_res = await(
         await fetch("http://localhost:4000/pieces", {
@@ -63,7 +56,7 @@ export default function PlayGame() {
             'Content-type': 'application/json'
           },
           body: JSON.stringify({
-            puzzle_id: defaultPuzzleId, 
+            puzzle_id: puzzleId, 
             piece_id, 
             current_location: `(${newLocation.x},${newLocation.y})`
           })
@@ -75,8 +68,7 @@ export default function PlayGame() {
 
     const saveProgress = async () => {
       await data.forEach((piece) => {
-        const piece_id = piece.id;
-        updateLocation(piece_id);
+        updateLocation(piece.local_id);
       })
 
       console.log("Saved successfully!");
@@ -89,8 +81,8 @@ export default function PlayGame() {
         const currentX = element.true_location.x;
         const currentY = element.true_location.y;
 
-        const newX = currentX + standardStep*(Math.floor(Math.random()*8) - 4);
-        const newY = currentY + standardStep*(Math.floor(Math.random()*6) - 3);
+        const newX = currentX + standardStep*(Math.floor(Math.random()*5) - 2);
+        const newY = currentY + standardStep*(Math.floor(Math.random()*4) - 1);
 
         element.current_location = {x: newX, y: newY};
       })
@@ -151,7 +143,7 @@ export default function PlayGame() {
     };
 
     const handleDragStartPiece = (e) => {
-      setSelectedPiece(e.target.id - idOffset);
+      setSelectedPiece(e.target.id);
       setPrevMouseCoords({x: e.clientX, y: e.clientY});
     };
 
@@ -168,8 +160,8 @@ export default function PlayGame() {
             <img
               src={background_mat}
               alt="background mat"
-              width={puzzle_size[0]}
-              height={puzzle_size[1]}
+              width={puzzleDimensions.width}
+              height={puzzleDimensions.height}
               style={{
                 position:"absolute",
                 left:margin[0],
@@ -188,10 +180,10 @@ export default function PlayGame() {
               {data.map(item => {
                   return(
                       <img
-                        key={item.id} 
-                        id={item.id} 
+                        key={item.local_id} 
+                        id={item.local_id} 
                         src={item.img_src}
-                        alt={"piece num. " + item.id}
+                        alt={"piece num. " + item.local_id}
                         width={item.dimensions.x}
                         height={item.dimensions.y}
                         style={{
