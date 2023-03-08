@@ -8,14 +8,6 @@ export default function PlayGame() {
     const [prevMouseCoords, setPrevMouseCoords] = useState({x: 0, y: 0})
     const [selectedPiece, setSelectedPiece] = useState(-1);
 
-    // Background texture
-    const background_img = "https://img.freepik.com/free-photo/oak-wooden-textured-design-background_53876-143033.jpg?w=2000";
-    const background_mat = "https://media.istockphoto.com/id/1092139474/photo/empty-green-casino-poker-table-cloth-with-spotlight.jpg?b=1&s=170667a&w=0&k=20&c=vxjd_9eXbFxziFSEG_tCGogO0ht0tgJ17C2iSx0C21k=";
-    const background_width = 1300;
-    const backgroun_height = 500;
-
-    // Puzzle and background mat
-    const margin = ["20%", "15%"];
     const standardStep = 50;
 
     const currentURL = window.location.href.split("/");
@@ -38,7 +30,6 @@ export default function PlayGame() {
           height: puzzleInfo.num_rows * pieces[0].dimensions.y
         };
         setPuzzleDimensions(dimensions);
-        console.log(dimensions);
       };
   
       dataFetch();
@@ -154,71 +145,64 @@ export default function PlayGame() {
 
     return (
         typeof data === 'undefined'
-        ? <div>Loading</div>
+        ? <div
+            id="loading-page"
+            className="container"
+          >
+            Loading
+          </div>
         :
-          <div>
-            <img
-              src={background_mat}
-              alt="background mat"
-              width={puzzleDimensions.width}
-              height={puzzleDimensions.height}
-              style={{
-                position:"absolute",
-                left:margin[0],
-                top:margin[1]
-              }}
-            >
-            </img>
+          <div 
+            id="PlayGame-page"
+            className="container"
+          >
             <div 
               id="puzzle"
+              className="container" 
               style={{
-                position:"absolute",
-                left:margin[0],
-                top:margin[1]
-            }}
-              >
+                width:puzzleDimensions.width,
+                height:puzzleDimensions.height,
+              }}
+            >
+              <div>
               {data.map(item => {
                   return(
                       <img
                         key={item.local_id} 
                         id={item.local_id} 
+                        className="puzzle-piece"
                         src={item.img_src}
                         alt={"piece num. " + item.local_id}
-                        width={item.dimensions.x}
-                        height={item.dimensions.y}
                         style={{
-                            position:"absolute",
-                            top:item.current_location.y,
-                            left:item.current_location.x
+                          left: item.current_location.x,
+                          top: item.current_location.y
                         }}
                         draggable="true"
                         onDragStart={handleDragStartPiece}
                         onDragEnd={handleDragEndPiece}
                       ></img>
                   )
-              })}
+              })}  
               </div>
-              <img
-                src={background_img}
-                alt="background"
-                width={background_width}
-                height={backgroun_height}
-              >
-              </img>
-              <div>
-                <button
-                  id="shuffle-btn"
-                  onClick={shufflePuzzle}
-                >Shuffle</button>
-                <button
-                  id="check-btn"
-                  onClick={checkPuzzle}
-                >Check</button>
-                <button
-                  id="save-btn"
-                  onClick={saveProgress}
-                >Save</button>
-              </div>
+              
+            </div>
+            <div 
+              id="button-container"
+              className="container"
+            >
+                  <button
+                    id="shuffle-btn"
+                    onClick={shufflePuzzle}
+                  >Shuffle</button>
+                  <button
+                    id="check-btn"
+                    onClick={checkPuzzle}
+                  >Check</button>
+                  <button
+                    id="save-btn"
+                    onClick={saveProgress}
+                  >Save</button>
+            </div>
           </div>
 
     )

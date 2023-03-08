@@ -2,32 +2,46 @@ import React, { useEffect, useState } from 'react';
 
 export default function CreatePuzzle () {
     const [imagePath, setImagePath] = useState('');
-    const [originalImg, setOriginalImg] = useState();
+    const [originalImage, setOriginalImage] = useState();
     const [numCols, setNumCols] = useState(1);
     const [numRows, setNumRows] = useState(1);
     const [piecesIds, setPiecesIds] = useState();
     const [maxWidth, setMaxWidth] = useState();
+    const [scaleFactor, setScaleFactor] = useState(1);
 
-    const marginPx = 3;
+    const imageMaxWidth = 650;
+    const imageMaxHeight = 450;
+    
+    const marginPx = 1;
 
     const defaultUserId = 1;
 
-    const handleSubmitImagePath = (e) => {
+    const handleSubmitImage = (e) => {
         const imageURL = e.target.value;
         setImagePath(imageURL);
 
-        const originalImage = new Image();
-        originalImage.crossOrigin = 'Anonymous';
-        originalImage.src = imageURL;
-        // Resize if it's too big!!
+        const newImage = new Image();
+        newImage.crossOrigin = 'Anonymous';
+        newImage.src = imageURL;
+        newImage.addEventListener('load', (e) => {
+            setOriginalImage(newImage);
+            
+            const widthToMaxRatio = newImage.width / imageMaxWidth; 
+            const heightToMaxRatio = newImage.height / imageMaxHeight; 
+            if (widthToMaxRatio > 1 || heightToMaxRatio > 1) {
+                const k = 1 / Math.max(widthToMaxRatio, heightToMaxRatio);
+                setScaleFactor(k);
 
-        setOriginalImg(originalImage);
+                console.log("Scale factor set to " + k);
+            }
+        })
     }
 
     const handleSubmitColsAndRows = (e) => {
         e.preventDefault();
 
-        setMaxWidth(originalImg.width + marginPx*numCols + 10);
+        const k = scaleFactor;
+        setMaxWidth(originalImage.width*k + marginPx*numCols + 10);
         setPiecesIds([...Array(numCols * numRows).keys()]);
     }
 
@@ -40,18 +54,20 @@ export default function CreatePuzzle () {
     }, [piecesIds])
 
     const createPiece = (id) => {
-        const pieceW = originalImg.width / numCols;
-        const pieceH = originalImg.height / numRows;
+        const k = scaleFactor;
+
+        const pieceW = originalImage.width / numCols;
+        const pieceH = originalImage.height / numRows;
         
         const canvas = document.getElementById(String(id));
-        canvas.width =  pieceW;
-        canvas.height =  pieceH;
+        canvas.width =  pieceW*k;
+        canvas.height =  pieceH*k;
 
         const ctx = canvas.getContext('2d');
         const startX = pieceW * (id % numCols);
         const startY = pieceH * parseInt(id/numCols);
      
-        ctx.drawImage(originalImg, startX, startY, pieceW, pieceH, 0, 0, pieceW, pieceH);
+        ctx.drawImage(originalImage, startX, startY, pieceW, pieceH, 0, 0, pieceW*k, pieceH*k);
     }
 
     // Functions to persist data in the server
@@ -60,11 +76,9 @@ export default function CreatePuzzle () {
         const encodedImg = canvas.toDataURL();
 
         const location = {
-            x: canvas.width * (id % numCols),               // PROBABLY WRONG!!
+            x: canvas.width * (id % numCols),               
             y: canvas.height * parseInt(id / numCols)
         }
-
-        // console.log(location);
   
         const query_res = await(
           await fetch("http://localhost:4000/pieces", {
@@ -74,7 +88,7 @@ export default function CreatePuzzle () {
             },
             body: JSON.stringify({
                 localId: id, 
-                imgSrc: encodedImg, 
+                imgSrc: encodedImg,
                 dimensions: {x:canvas.width, y: canvas.height}, 
                 currentLoc: location, 
                 trueLoc: location, 
@@ -83,11 +97,10 @@ export default function CreatePuzzle () {
           })
         ).json();
   
-        // console.log(query_res.puzzle_id);
+        // console.log(query_res);
       };
   
     const savePuzzle = async (req, res, next) => {
-        // Let user assign name
 
         const query_res = await(
             await fetch("http://localhost:4000/puzzles", {
@@ -104,9 +117,10 @@ export default function CreatePuzzle () {
             })
           ).json();
     
-        //   console.log(query_res.id);
+        //   console.log(query_res);
           const puzzleId = query_res.id; 
 
+        console.log(piecesIds);
         await piecesIds.forEach((id) => {
           savePiece(puzzleId, id);
         })
@@ -120,13 +134,13 @@ export default function CreatePuzzle () {
         ? 
         (
             <div>
-                <form onSubmit={(e) => {e.preventDefault()}}>
+                <form onSubmit={(e) => e.preventDefault()}>
                     <input 
                         type="text" 
                         id="url" 
                         placeholder="Paste the url here: "
                         value={imagePath}
-                        onChange={handleSubmitImagePath}
+                        onChange={handleSubmitImage}
                     />
                     <input type="submit" value="Submit"></input>
                 </form>
@@ -145,7 +159,10 @@ export default function CreatePuzzle () {
                                 <canvas 
                                     key={i}
                                     id={i}
-                                    style={{marginRight:marginPx}}
+                                    className="puzzle-piece-canvas"
+                                    style={{
+                                        margin: marginPx
+                                    }}
                                 ></canvas>
                             )
                         })}
@@ -153,8 +170,11 @@ export default function CreatePuzzle () {
                 )
                 :
                 (
-                    <div>
-                        <img 
+                    <div 
+                        id="image-container"
+                    >
+                        <img
+                            id="original-image"
                             src={imagePath}
                         ></img>
                     </div>

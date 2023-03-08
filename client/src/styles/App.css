@@ -1,0 +1,43 @@
+.App {
+  text-align: center;
+}
+
+#root {
+  height:100%;
+}
+
+.container {
+  margin:0px;
+}
+
+#original-image {
+  max-width: 70%;
+  max-height: 450px;
+}
+
+.puzzle-piece-canvas {
+  float:left
+}
+
+#PlayGame-page {
+  background-image: url("https://img.freepik.com/free-photo/oak-wooden-textured-design-background_53876-143033.jpg?w=2000");
+  height: 100%;
+  padding-top: 5%;
+
+}
+
+#puzzle {
+  background-image: url("https://media.istockphoto.com/id/1092139474/photo/empty-green-casino-poker-table-cloth-with-spotlight.jpg?b=1&s=170667a&w=0&k=20&c=vxjd_9eXbFxziFSEG_tCGogO0ht0tgJ17C2iSx0C21k=");
+  margin: 0 auto;
+  position:relative;
+}
+
+.puzzle-piece {
+  position:absolute;
+  float:left;
+}
+
+#button-container {
+  margin-top: 10px;
+}
+
