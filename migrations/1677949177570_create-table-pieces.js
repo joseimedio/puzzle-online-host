@@ -8,7 +8,7 @@ exports.up = pgm => {
             id SERIAL PRIMARY KEY,
             local_id INTEGER NOT NULL,
             img_src VARCHAR NOT NULL,
-            img_src_extra VARCHAR, 
+            img_src_extra VARCHAR,
             dimensions POINT NOT NULL,
             current_location POINT NOT NULL,
             true_location POINT NOT NULL,

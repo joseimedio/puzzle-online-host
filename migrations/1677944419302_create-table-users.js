@@ -10,6 +10,10 @@ exports.up = pgm => {
             pass VARCHAR(8) NOT NULL,
             joined_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );
+
+        INSERT INTO users (username, pass)
+        VALUES
+            ('test1', '12345678');
     `)
 };
 

@@ -20,6 +20,7 @@ export default function PlayGame() {
           await fetch("http://localhost:4000/puzzles/" + String(puzzleId))
         ).json();
   
+        console.log(serverData);
         const pieces = serverData.pieces;
         pieces.sort((a,b) => a.local_id - b.local_id);
         setData(pieces);
@@ -171,7 +172,11 @@ export default function PlayGame() {
                         key={item.local_id} 
                         id={item.local_id} 
                         className="puzzle-piece"
-                        src={item.img_src}
+                        src={
+                          item.img_src_extra
+                          ? item.img_src.concat(item.img_src_extra)
+                          : item.img_src
+                        }
                         alt={"piece num. " + item.local_id}
                         style={{
                           left: item.current_location.x,

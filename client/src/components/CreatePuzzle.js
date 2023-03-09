@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+const { savePuzzleToServer, savePieceToServer, saveExtraCharactersToServer } = require('../utils');
 
 export default function CreatePuzzle () {
     const [imagePath, setImagePath] = useState('');
@@ -80,47 +81,27 @@ export default function CreatePuzzle () {
             y: canvas.height * parseInt(id / numCols)
         }
   
-        const query_res = await(
-          await fetch("http://localhost:4000/pieces", {
-            method: "POST",
-            headers: {
-              'Content-type': 'application/json'
-            },
-            body: JSON.stringify({
-                localId: id, 
-                imgSrc: encodedImg,
-                dimensions: {x:canvas.width, y: canvas.height}, 
-                currentLoc: location, 
-                trueLoc: location, 
-                puzzleId
-            })
-          })
-        ).json();
-  
-        // console.log(query_res);
+        const dimensions = {x:canvas.width, y: canvas.height};
+
+        console.log(id + ": " + encodedImg.length);
+        const threshold = 99999;                                                                
+        if (encodedImg.length <= threshold) {                                                   
+            savePieceToServer(id, encodedImg, dimensions, location, location, puzzleId);
+
+        } else {
+            const encodedImgPartA = encodedImg.slice(0, threshold);                             // If the base64 encoding is too long
+            const encodedImgPartB = encodedImg.slice(threshold, encodedImg.length);             // we need to split it into two parts.
+
+            savePieceToServer(id, encodedImgPartA, dimensions, location, location, puzzleId);
+            saveExtraCharactersToServer(id, encodedImgPartB, puzzleId);
+        }
+
       };
   
-    const savePuzzle = async (req, res, next) => {
+    const savePuzzle = async () => {
+        const query_res = await savePuzzleToServer(imagePath, numCols, numRows, defaultUserId);
+        const puzzleId = query_res.id; 
 
-        const query_res = await(
-            await fetch("http://localhost:4000/puzzles", {
-              method: "POST",
-              headers: {
-                'Content-type': 'application/json'
-              },
-              body: JSON.stringify({
-                imagePath, 
-                numCols, 
-                numRows, 
-                userId: defaultUserId
-              })
-            })
-          ).json();
-    
-        //   console.log(query_res);
-          const puzzleId = query_res.id; 
-
-        console.log(piecesIds);
         await piecesIds.forEach((id) => {
           savePiece(puzzleId, id);
         })

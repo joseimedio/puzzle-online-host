@@ -94,10 +94,23 @@ const deleteUser = async (req, res, next) => {
     }   
 };
 
+const updatePieceCreate = async (req, res, next) => {
+    const { localId, imgSrcExtra, puzzleId } = req.body;
+
+    try {
+        const result = await pool.query(
+            'UPDATE pieces SET img_src_extra=$1 WHERE puzzle_id=$2 AND local_id=$3 RETURNING *', 
+            [imgSrcExtra, puzzleId, localId]
+        );
+
+        res.json(result.rows[0])
+    } catch (err) {
+        next(err);
+    }
+};
+
 const updatePiece = async (req, res, next) => {
     const { puzzle_id, piece_id, current_location } = req.body;
-
-    console.log(current_location);
 
     try {
         const result = await pool.query(
@@ -118,5 +131,6 @@ module.exports = {
     insertPieces,
     deletePuzzle,
     deleteUser,
+    updatePieceCreate,
     updatePiece
 };
