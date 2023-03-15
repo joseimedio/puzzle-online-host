@@ -15,6 +15,7 @@ const savePuzzleToServer = async (imagePath, numCols, numRows, userId) => {
         })
       ).json();
 
+    console.log(query_res);
     return query_res;
 }
 

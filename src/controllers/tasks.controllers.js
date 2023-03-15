@@ -67,11 +67,11 @@ const insertPieces = async (req, res, next) => {
 };
 
 const deletePuzzle = async (req, res, next) => {
-    const { puzzle_id } = req.body;
+    const { puzzleId } = req.body;
 
     try {
         const result = await pool.query(
-            'DELETE * FROM puzzles WHERE id = $1', [puzzle_id]
+            'DELETE * FROM puzzles WHERE id = $1', [puzzleId]
         );
 
         res.json(result.rows[0])
@@ -81,11 +81,11 @@ const deletePuzzle = async (req, res, next) => {
 };
 
 const deleteUser = async (req, res, next) => {
-    const { user_id } = req.body;
+    const { userId } = req.body;
 
     try {
         const result = await pool.query(
-            'DELETE * FROM users WHERE id = $1', [user_id]
+            'DELETE * FROM users WHERE id = $1', [userId]
         );
 
         res.json(result.rows[0])
@@ -110,12 +110,12 @@ const updatePieceCreate = async (req, res, next) => {
 };
 
 const updatePiece = async (req, res, next) => {
-    const { puzzle_id, piece_id, current_location } = req.body;
+    const { puzzleId, pieceId, currentLocation } = req.body;
 
     try {
         const result = await pool.query(
             'UPDATE pieces SET current_location=$1 WHERE puzzle_id=$2 AND local_id=$3 RETURNING *', 
-            [current_location, puzzle_id, piece_id]
+            [currentLocation, puzzleId, pieceId]
         );
 
         res.json(result.rows[0])

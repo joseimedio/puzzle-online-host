@@ -38,8 +38,8 @@ export default function PlayGame() {
 
 
     // Functions to persist data in the server
-    const updateLocation = async (piece_id) => {
-      const newLocation = data[piece_id].current_location;
+    const updateLocation = async (piece) => {
+      const newLocation = piece.current_location;
 
       const query_res = await(
         await fetch("http://localhost:4000/pieces", {
@@ -48,9 +48,9 @@ export default function PlayGame() {
             'Content-type': 'application/json'
           },
           body: JSON.stringify({
-            puzzle_id: puzzleId, 
-            piece_id, 
-            current_location: `(${newLocation.x},${newLocation.y})`
+            puzzleId, 
+            pieceId: piece.local_id, 
+            currentLocation: `(${newLocation.x},${newLocation.y})`
           })
         })
       ).json();
@@ -60,7 +60,8 @@ export default function PlayGame() {
 
     const saveProgress = async () => {
       await data.forEach((piece) => {
-        updateLocation(piece.local_id);
+        console.log(piece);
+        updateLocation(piece);
       })
 
       console.log("Saved successfully!");
