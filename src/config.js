@@ -8,5 +8,12 @@ module.exports = {
         host: process.env.DB_HOST, 
         port: process.env.DB_PORT,
         database: process.env.DB_DATABASE 
+    },
+    dbLocal: {
+        user: process.env.DB_USER_LOCAL,
+        password: process.env.DB_PASSWORD_LOCAL,
+        host: process.env.DB_HOST_LOCAL, 
+        port: process.env.DB_PORT_LOCAL,
+        database: process.env.DB_DATABASE_LOCAL  
     }
 }
