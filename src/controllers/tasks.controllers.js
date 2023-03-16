@@ -1,5 +1,13 @@
 const pool = require('../db');
 
+const testConnection = async (req, res, next) => {
+    try {
+        res.send("Connected")
+    } catch (err){
+        next(err);
+    }
+};
+
 const getPuzzle = async (req, res, next) => {
     puzzle_id = req.params.id;
 
@@ -125,6 +133,7 @@ const updatePiece = async (req, res, next) => {
 };
 
 module.exports = {
+    testConnection,
     getPuzzle,
     createPuzzle,
     createUser,
