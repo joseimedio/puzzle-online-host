@@ -1,26 +1,36 @@
 const { Pool } = require('pg');
-const { db, dbLocal } = require('./config')
+const { db, dbHeroku } = require('./config')
 
-const local = false;
+const poolLocal = new Pool({
+    user:     db.user,
+    password: db.password,
+    host:     db.host,
+    port:     db.port,
+    database: db.database
+});
 
-// const pool = new Pool({
-//     user:     local ? dbLocal.user     : db.user,
-//     password: local ? dbLocal.password : db.password,
-//     host:     local ? dbLocal.host     : db.host,
-//     port:     local ? dbLocal.port     : db.port,
-//     database: local ? dbLocal.database : db.database,
-//     ssl: {
-//         rejectUnauthorized: false
-//     }
-// });
+const poolLocalToHeroku = new Pool({
+    user:     dbHeroku.user,
+    password: dbHeroku.password,
+    host:     dbHeroku.host,
+    port:     dbHeroku.port,
+    database: dbHeroku.database,
+    ssl: {
+        rejectUnauthorized: false
+    }
+});
 
 const connectionString = process.env.DATABASE_URL;
-const pool = new Pool({
+const poolHeroku = new Pool({
     connectionString,
     ssl: {
         rejectUnauthorized: false
     }
 });
+
+const pool = connectionString 
+            ? poolHeroku 
+            : poolLocalToHeroku;
 
 
 module.exports = pool;

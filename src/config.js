@@ -9,11 +9,11 @@ module.exports = {
         port: process.env.DB_PORT,
         database: process.env.DB_DATABASE 
     },
-    dbLocal: {
-        user: process.env.DB_USER_LOCAL,
-        password: process.env.DB_PASSWORD_LOCAL,
-        host: process.env.DB_HOST_LOCAL, 
-        port: process.env.DB_PORT_LOCAL,
-        database: process.env.DB_DATABASE_LOCAL  
+    dbHeroku: {
+        user: process.env.DB_USER_HEROKU,
+        password: process.env.DB_PASSWORD_HEROKU,
+        host: process.env.DB_HOST_HEROKU, 
+        port: process.env.DB_PORT_HEROKU,
+        database: process.env.DB_DATABASE_HEROKU 
     }
 }
