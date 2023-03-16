@@ -2,7 +2,7 @@ const pool = require('../db');
 
 const testConnection = async (req, res, next) => {
     try {
-        res.send("Connected")
+        res.send(process.env.DATABASE_URL || "Connected")
     } catch (err){
         next(err);
     }
