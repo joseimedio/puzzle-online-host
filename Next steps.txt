@@ -1,9 +1,0 @@
-- Limit image size.
-- Shuffle only works after moving the mouse.
-- Basic Login.
-- Upload your own image (maybe needed to upload it to imgBB).
-- Host the server online.
-- Make it collaborative.
-- Split code in React components.
-- Design.
-- Google Auth.
