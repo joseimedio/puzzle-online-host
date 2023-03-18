@@ -100,7 +100,7 @@ const deletePuzzle = async (req, res, next) => {
 
     try {
         const result = await pool.query(
-            'DELETE * FROM puzzles WHERE id = $1', [puzzleId]
+            'DELETE FROM puzzles WHERE id = $1', [puzzleId]
         );
 
         res.json(result.rows[0])
@@ -114,7 +114,7 @@ const deleteUser = async (req, res, next) => {
 
     try {
         const result = await pool.query(
-            'DELETE * FROM users WHERE id = $1', [userId]
+            'DELETE FROM users WHERE id = $1', [userId]
         );
 
         res.json(result.rows[0])
