@@ -8,6 +8,27 @@ const testConnection = async (req, res, next) => {
     }
 };
 
+const getUsers = async (req, res, next) => {
+    try {
+        const userList = await pool.query('SELECT * FROM users');
+        res.json(userList.rows[0])
+    } catch (err){
+        next(err);
+    }
+};
+
+const getUserInfo = async (req, res, next) => {
+    user_id = req.params.id;
+
+    try {
+        const userInfo = await pool.query('SELECT * FROM users WHERE id=$1', [user_id]);
+        const allPuzzles = await pool.query('SELECT * FROM puzzles WHERE user_id=$1', [user_id]);
+        res.json({info:userInfo.rows, puzzles:allPuzzles.rows})
+    } catch (err){
+        next(err);
+    }
+};
+
 const getPuzzle = async (req, res, next) => {
     puzzle_id = req.params.id;
 
@@ -134,6 +155,8 @@ const updatePiece = async (req, res, next) => {
 
 module.exports = {
     testConnection,
+    getUsers,
+    getUserInfo,
     getPuzzle,
     createPuzzle,
     createUser,

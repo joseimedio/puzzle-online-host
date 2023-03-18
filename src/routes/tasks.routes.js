@@ -1,9 +1,13 @@
 const { Router } = require('express');
-const { testConnection, getPuzzle, createPuzzle, createUser, insertPieces, deletePuzzle, deleteUser, updatePieceCreate, updatePiece } = require('../controllers/tasks.controllers')
+const { testConnection, getUsers, getUserInfo, getPuzzle, createPuzzle, createUser, insertPieces, deletePuzzle, deleteUser, updatePieceCreate, updatePiece } = require('../controllers/tasks.controllers')
 
 const router = Router();
 
 router.get('/', testConnection);
+
+router.get('/users', getUsers);
+
+router.get('/users/:id', getUserInfo);
 
 router.get('/puzzles/:id', getPuzzle);
 
