@@ -10,7 +10,7 @@ const testConnection = async (req, res, next) => {
 
 const getUsers = async (req, res, next) => {
     try {
-        const userList = await pool.query('SELECT * FROM users');
+        const userList = await pool.query('SELECT * FROM users;');
         res.json(userList.rows[0])
     } catch (err){
         next(err);
