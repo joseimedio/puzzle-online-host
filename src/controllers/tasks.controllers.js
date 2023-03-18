@@ -42,14 +42,14 @@ const getPuzzle = async (req, res, next) => {
 };
 
 const createPuzzle = async (req, res, next) => {
-    const { imagePath, numCols, numRows, userId } = req.body;
+    const { name, imagePath, numCols, numRows, userId } = req.body;
 
     try {
         const result = await pool.query(
             `
-            INSERT INTO puzzles (original_image_url, num_cols, num_rows, user_id)
+            INSERT INTO puzzles (name, original_image_url, num_cols, num_rows, user_id)
             VALUES
-                ('${imagePath}', '${numCols}', '${numRows}', '${userId}')
+                ('${name}', '${imagePath}', '${numCols}', '${numRows}', '${userId}')
             RETURNING *;
             `
         );

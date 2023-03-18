@@ -6,6 +6,7 @@ exports.up = pgm => {
     pgm.sql(`
         CREATE TABLE puzzles (
             id SERIAL PRIMARY KEY,
+            name VARCHAR (200) NOT NULL,
             original_image_url VARCHAR(400) NOT NULL,
             num_cols INTEGER NOT NULL,
             num_rows INTEGER NOT NULL,        
