@@ -100,7 +100,7 @@ const deletePuzzle = async (req, res, next) => {
 
     try {
         const result = await pool.query(
-            'DELETE FROM puzzles WHERE id = $1', [puzzleId]
+            'DELETE FROM puzzles WHERE id = $1 RETURNING *', [puzzleId]
         );
 
         res.json(result.rows[0])
@@ -114,13 +114,28 @@ const deleteUser = async (req, res, next) => {
 
     try {
         const result = await pool.query(
-            'DELETE FROM users WHERE id = $1', [userId]
+            'DELETE FROM users WHERE id = $1 RETURNING *', [userId]
         );
 
         res.json(result.rows[0])
     } catch (err) {
         next(err);
     }   
+};
+
+const updatePuzzleCreate = async (req, res, next) => {
+    const { puzzleId, imgSrc, imgSrcExtra } = req.body;
+
+    try {
+        const result = await pool.query(
+            'UPDATE puzzles SET img_src=$1, img_src_extra=$2 WHERE id=$3 RETURNING *', 
+            [imgSrc, imgSrcExtra, puzzleId]
+        );
+
+        res.json(result.rows[0])
+    } catch (err) {
+        next(err);
+    }
 };
 
 const updatePieceCreate = async (req, res, next) => {
@@ -163,6 +178,7 @@ module.exports = {
     insertPieces,
     deletePuzzle,
     deleteUser,
+    updatePuzzleCreate,
     updatePieceCreate,
     updatePiece
 };

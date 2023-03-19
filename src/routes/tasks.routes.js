@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { testConnection, getUsers, getUserInfo, getPuzzle, createPuzzle, createUser, insertPieces, deletePuzzle, deleteUser, updatePieceCreate, updatePiece } = require('../controllers/tasks.controllers')
+const { testConnection, getUsers, getUserInfo, getPuzzle, createPuzzle, createUser, insertPieces, deletePuzzle, deleteUser, updatePuzzleCreate, updatePieceCreate, updatePiece } = require('../controllers/tasks.controllers')
 
 const router = Router();
 
@@ -20,6 +20,8 @@ router.post('/pieces', insertPieces);
 router.delete('/puzzles', deletePuzzle);
 
 router.delete('/users', deleteUser);
+
+router.put('/puzzles/create', updatePuzzleCreate);
 
 router.put('/pieces/create', updatePieceCreate);
 
