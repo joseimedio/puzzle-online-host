@@ -7,13 +7,10 @@ exports.up = pgm => {
         CREATE TABLE users (
             id SERIAL PRIMARY KEY,
             username VARCHAR(50) NOT NULL,
-            pass VARCHAR(8) NOT NULL,
+            pass VARCHAR(200) NOT NULL,
+            email VARCHAR(200),
             joined_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         );
-
-        INSERT INTO users (username, pass)
-        VALUES
-            ('test1', '12345678');
     `)
 };
 

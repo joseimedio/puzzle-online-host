@@ -61,11 +61,11 @@ const createPuzzle = async (req, res, next) => {
 };
 
 const createUser = async (req, res, next) => {
-    const { username, pass } = req.body;
+    const { username, pass, email } = req.body;
 
     try {
         const result = await pool.query(
-            'INSERT INTO users (username, pass) VALUES ($1, $2)', [username, pass]
+            'INSERT INTO users (username, pass, email) VALUES ($1, $2, $3)', [username, pass, email]
         );
 
         res.json(result.rows[0])
