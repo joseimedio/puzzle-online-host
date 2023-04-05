@@ -12,7 +12,6 @@ exports.up = pgm => {
             dimensions POINT NOT NULL,
             current_location POINT NOT NULL,
             true_location POINT NOT NULL,
-            updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             puzzle_id INTEGER NOT NULL REFERENCES puzzles(id) ON DELETE CASCADE 
         );
     `);

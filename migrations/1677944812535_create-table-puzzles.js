@@ -7,10 +7,10 @@ exports.up = pgm => {
         CREATE TABLE puzzles (
             id SERIAL PRIMARY KEY,
             name VARCHAR (200) NOT NULL,
-            img_src VARCHAR,
-            img_src_extra VARCHAR,
+            dimensions POINT NOT NULL,
             num_cols INTEGER NOT NULL,
             num_rows INTEGER NOT NULL,        
+            completion_percent INTEGER DEFAULT 100,
             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE

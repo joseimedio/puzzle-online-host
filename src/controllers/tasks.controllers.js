@@ -42,14 +42,15 @@ const getPuzzle = async (req, res, next) => {
 };
 
 const createPuzzle = async (req, res, next) => {
-    const { name, numCols, numRows, userId } = req.body;
+    const { name, dimensions, numCols, numRows, userId } = req.body;
 
     try {
         const result = await pool.query(
             `
-            INSERT INTO puzzles (name, num_cols, num_rows, user_id)
+            INSERT INTO puzzles (name, dimensions, num_cols, num_rows, user_id)
             VALUES
-                ('${name}', '${numCols}', '${numRows}', '${userId}')
+                ('${name}', '(${dimensions.x}, ${dimensions.y})', 
+                '${numCols}', '${numRows}', '${userId}')
             RETURNING *;
             `
         );
@@ -123,13 +124,13 @@ const deleteUser = async (req, res, next) => {
     }   
 };
 
-const updatePuzzleCreate = async (req, res, next) => {
-    const { puzzleId, imgSrc, imgSrcExtra } = req.body;
+const updatePuzzle = async (req, res, next) => {
+    const { puzzleId, completionPercent } = req.body;
 
     try {
         const result = await pool.query(
-            'UPDATE puzzles SET img_src=$1, img_src_extra=$2 WHERE id=$3 RETURNING *', 
-            [imgSrc, imgSrcExtra, puzzleId]
+            'UPDATE puzzles SET completion_percent=$1, updated_at = CURRENT_TIMESTAMP WHERE id=$2 RETURNING *', 
+            [completionPercent, puzzleId]
         );
 
         res.json(result.rows[0])
@@ -178,7 +179,7 @@ module.exports = {
     insertPieces,
     deletePuzzle,
     deleteUser,
-    updatePuzzleCreate,
+    updatePuzzle,
     updatePieceCreate,
     updatePiece
 };
