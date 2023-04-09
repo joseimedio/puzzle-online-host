@@ -47,7 +47,7 @@ const getPuzzle = async (req, res, next) => {
     puzzleId = req.params.id;
 
     try {
-        const puzzleInfo = await pool.query('SELECT * FROM puzzles WHERE id=$1', [puzzleId]);
+        const puzzleInfo = await pool.query('SELECT * FROM puzzles WHERE pzz_id=$1', [puzzleId]);
         const allPieces = await pool.query('SELECT * FROM pieces WHERE puzzle_id=$1 ORDER BY abs_id', [puzzleId]);
         res.json({info:puzzleInfo.rows, pieces:allPieces.rows})
     } catch (err){
@@ -91,6 +91,7 @@ const createUser = async (req, res, next) => {
 
 const insertPieces = async (req, res, next) => {
     const { localId, imgSrc, dimensions, currentLoc, trueLoc, puzzleId } = req.body;
+    console.log(localId, imgSrc, dimensions, currentLoc, trueLoc, puzzleId);
 
     try {
         const result = await pool.query(
@@ -115,7 +116,7 @@ const deletePuzzle = async (req, res, next) => {
 
     try {
         const result = await pool.query(
-            'DELETE FROM puzzles WHERE id = $1 RETURNING *', [puzzleId]
+            'DELETE FROM puzzles WHERE pzz_id = $1 RETURNING *', [puzzleId]
         );
 
         res.json(result.rows[0])
