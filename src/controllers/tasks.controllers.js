@@ -144,7 +144,7 @@ const updatePuzzle = async (req, res, next) => {
 
     try {
         const result = await pool.query(
-            'UPDATE puzzles SET completion_percent=$1, updated_at = CURRENT_TIMESTAMP WHERE id=$2 RETURNING *', 
+            'UPDATE puzzles SET completion_percent=$1, updated_at = CURRENT_TIMESTAMP WHERE pzz_id=$2 RETURNING *', 
             [completionPercent, puzzleId]
         );
 
