@@ -12,7 +12,7 @@ exports.up = pgm => {
             piece_dimensions POINT NOT NULL,
             current_location POINT NOT NULL,
             true_location POINT NOT NULL,
-            puzzle_id INTEGER NOT NULL REFERENCES puzzles(id) ON DELETE CASCADE 
+            puzzle_id INTEGER NOT NULL REFERENCES puzzles(pzz_id) ON DELETE CASCADE 
         );
     `);
 };

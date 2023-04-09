@@ -21,14 +21,21 @@ const getUserInfo = async (req, res, next) => {
     userId = req.params.id;
 
     try {
-        const userInfo = await pool.query('SELECT joined_at FROM users WHERE id=$1', [userId]);
+        const userInfo = await pool.query(`
+            SELECT *
+            FROM puzzles
+            INNER JOIN users
+                ON user_id = users.id
+            WHERE user_id=${userId}
+            ORDER BY pzz_id;
+            `);
         const allPuzzles = await pool.query(`
             SELECT * 
             FROM pieces 
             INNER JOIN puzzles 
-                ON puzzle_id=puzzles.id 
+                ON puzzle_id=puzzles.pzz_id 
             WHERE user_id=${userId}
-            ORDER BY abs_id
+            ORDER BY abs_id;
              `);
         res.json({info:userInfo.rows, puzzles:allPuzzles.rows})
     } catch (err){

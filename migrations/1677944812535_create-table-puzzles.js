@@ -5,7 +5,7 @@ exports.shorthands = undefined;
 exports.up = pgm => {
     pgm.sql(`
         CREATE TABLE puzzles (
-            id SERIAL PRIMARY KEY,
+            pzz_id SERIAL PRIMARY KEY,
             name VARCHAR (200) NOT NULL,
             puzzle_dimensions POINT NOT NULL,
             num_cols INTEGER NOT NULL,
