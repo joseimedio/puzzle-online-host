@@ -5,11 +5,11 @@ exports.shorthands = undefined;
 exports.up = pgm => {
     pgm.sql(`
         CREATE TABLE pieces (
-            id SERIAL PRIMARY KEY,
+            abs_id SERIAL PRIMARY KEY,
             local_id INTEGER NOT NULL,
             img_src VARCHAR NOT NULL,
             img_src_extra VARCHAR,
-            dimensions POINT NOT NULL,
+            piece_dimensions POINT NOT NULL,
             current_location POINT NOT NULL,
             true_location POINT NOT NULL,
             puzzle_id INTEGER NOT NULL REFERENCES puzzles(id) ON DELETE CASCADE 

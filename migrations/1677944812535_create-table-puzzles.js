@@ -7,7 +7,7 @@ exports.up = pgm => {
         CREATE TABLE puzzles (
             id SERIAL PRIMARY KEY,
             name VARCHAR (200) NOT NULL,
-            dimensions POINT NOT NULL,
+            puzzle_dimensions POINT NOT NULL,
             num_cols INTEGER NOT NULL,
             num_rows INTEGER NOT NULL,        
             completion_percent INTEGER DEFAULT 100,

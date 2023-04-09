@@ -18,11 +18,18 @@ const getUsers = async (req, res, next) => {
 };
 
 const getUserInfo = async (req, res, next) => {
-    user_id = req.params.id;
+    userId = req.params.id;
 
     try {
-        const userInfo = await pool.query('SELECT * FROM users WHERE id=$1', [user_id]);
-        const allPuzzles = await pool.query('SELECT * FROM puzzles WHERE user_id=$1', [user_id]);
+        const userInfo = await pool.query('SELECT joined_at FROM users WHERE id=$1', [userId]);
+        const allPuzzles = await pool.query(`
+            SELECT * 
+            FROM pieces 
+            INNER JOIN puzzles 
+                ON puzzle_id=puzzles.id 
+            WHERE user_id=${userId}
+            ORDER BY abs_id
+             `);
         res.json({info:userInfo.rows, puzzles:allPuzzles.rows})
     } catch (err){
         next(err);
@@ -30,11 +37,11 @@ const getUserInfo = async (req, res, next) => {
 };
 
 const getPuzzle = async (req, res, next) => {
-    puzzle_id = req.params.id;
+    puzzleId = req.params.id;
 
     try {
-        const puzzleInfo = await pool.query('SELECT * FROM puzzles WHERE id=$1', [puzzle_id]);
-        const allPieces = await pool.query('SELECT * FROM pieces WHERE puzzle_id=$1', [puzzle_id]);
+        const puzzleInfo = await pool.query('SELECT * FROM puzzles WHERE id=$1', [puzzleId]);
+        const allPieces = await pool.query('SELECT * FROM pieces WHERE puzzle_id=$1 ORDER BY abs_id', [puzzleId]);
         res.json({info:puzzleInfo.rows, pieces:allPieces.rows})
     } catch (err){
         next(err);
@@ -47,7 +54,7 @@ const createPuzzle = async (req, res, next) => {
     try {
         const result = await pool.query(
             `
-            INSERT INTO puzzles (name, dimensions, num_cols, num_rows, user_id)
+            INSERT INTO puzzles (name, puzzle_dimensions, num_cols, num_rows, user_id)
             VALUES
                 ('${name}', '(${dimensions.x}, ${dimensions.y})', 
                 '${numCols}', '${numRows}', '${userId}')
@@ -81,7 +88,7 @@ const insertPieces = async (req, res, next) => {
     try {
         const result = await pool.query(
             `
-                INSERT INTO pieces (local_id, img_src, dimensions, 
+                INSERT INTO pieces (local_id, img_src, piece_dimensions, 
                                         current_location, true_location, puzzle_id)
                 VALUES 
                     ('${localId}', '${imgSrc}', '(${dimensions.x}, ${dimensions.y})', 
