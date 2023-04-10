@@ -80,7 +80,7 @@ const createUser = async (req, res, next) => {
 
     try {
         const result = await pool.query(
-            'INSERT INTO users (username, pass, email) VALUES ($1, $2, $3)', [username, pass, email]
+            'INSERT INTO users (username, pass, email) VALUES ($1, $2, $3) RETURNING *;', [username, pass, email]
         );
 
         res.json(result.rows[0])
